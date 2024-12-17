@@ -1,5 +1,5 @@
 {
-  "name": "employee-app",
+  "name": "customers",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,8 +10,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@coreui/icons": "^3.0.1",
+    "@coreui/icons-react": "^2.3.0",
+    "@coreui/react": "^5.4.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.2.0",
+    "@mui/material": "^6.2.0",
+    "@mui/x-data-grid": "^7.23.2",
+    "@mui/x-date-pickers": "^7.23.2",
+    "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
