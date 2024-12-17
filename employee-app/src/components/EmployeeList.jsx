@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import { IconButton, Modal, Button } from '@mui/material';
+import { IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import StarIcon from '@mui/icons-material/Star';
@@ -16,13 +16,15 @@ import API_ENDPOINT from '../services/config';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import Grid from '@mui/material/Grid';
-import { styled } from '@mui/material/styles';
+import '../styles/datatable.css'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
+import DeleteModal from './delete/DeleteModal';
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
@@ -33,6 +35,7 @@ const EmployeeList = () => {
   const [selectedEmpNo, setSelectedEmpNo] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const searchInputRef = useRef(null);
 
 
   //  Get Employee details
@@ -75,31 +78,38 @@ const EmployeeList = () => {
     const selectedDept = event.target.value;
     setSelectedDepartment(selectedDept);
     console.log('selectedDepartment ==========>>>>', selectedDepartment);
-    
+
     if (selectedDept) {
       const filtered = employees.filter(
         (emp) => emp.departmentCode === selectedDept
       );
       setFilteredEmployees(filtered);
     } else {
-      setFilteredEmployees(employees); 
+      setFilteredEmployees(employees);
     }
   };
 
   // Handle search input change
-const handleSearchChange = (event) => {
-  const query = event.target.value.toLowerCase(); 
-  setSearchInput(query);
+  const handleSearchChange = (event) => {
+    const query = event.target.value.toLowerCase();
+    setSearchInput(query);
 
-  if (query) {
-    const filtered = employees.filter((emp) =>
-      emp.empName.toLowerCase().includes(query)
-    );
-    setFilteredEmployees(filtered);
-  } else {
-    setFilteredEmployees(employees); // Reset to all employees when search is cleared
-  }
-};
+    // Keep input focused
+    searchInputRef.current?.focus();
+
+    if (query) {
+      const filtered = employees.filter((emp) =>
+        emp.empName.toLowerCase().includes(query)
+      );
+      setFilteredEmployees(filtered);
+    } else {
+      setFilteredEmployees(employees);
+    }
+  };
+
+  useEffect(() => {
+    setFilteredEmployees(employees);
+  }, [employees]);
 
   // Handle Delete API Call
   const deleteEmployee = async () => {
@@ -142,27 +152,30 @@ const handleSearchChange = (event) => {
   }
 
   const columns = [
-    { field: 'empNo', headerName: 'empNo', width: 70 },
-    { field: 'empName', headerName: 'empName', width: 160 },
-    { field: 'empAddressLine1', headerName: 'Address Line1', width: 160 },
-    { field: 'empAddressLine2', headerName: 'Address Line2', width: 160 },
-    { field: 'empAddressLine3', headerName: 'Address Line3', width: 160 },
-    { field: 'departmentCode', headerName: 'Department', width: 120 },
+    { field: 'empNo', headerName: 'empNo', width: 70, headerClassName: 'header-cell' },
+    { field: 'empName', headerName: 'empName', width: 160, headerClassName: 'header-cell' },
+    { field: 'empAddressLine1', headerName: 'Address Line1', width: 160, headerClassName: 'header-cell' },
+    { field: 'empAddressLine2', headerName: 'Address Line2', width: 160, headerClassName: 'header-cell' },
+    { field: 'empAddressLine3', headerName: 'Address Line3', width: 160, headerClassName: 'header-cell' },
+    { field: 'departmentCode', headerName: 'Department', width: 120, headerClassName: 'header-cell' },
     {
       field: 'dateOfJoin',
       headerName: 'Join Date',
       width: 160,
+      headerClassName: 'header-cell'
     },
     {
       field: 'dateOfBirth',
       headerName: 'B`Date',
       width: 120,
+      headerClassName: 'header-cell'
     },
-    { field: 'basicSalary', headerName: 'Salary', width: 120 },
+    { field: 'basicSalary', headerName: 'Salary', width: 120, headerClassName: 'header-cell' },
     {
       field: 'options',
       headerName: 'Options',
       width: 150,
+      headerClassName: 'header-cell',
       renderCell: (params) => (
         <div>
           <IconButton onClick={() => handleEdit(params.row.empNo)} color="primary">
@@ -183,16 +196,6 @@ const handleSearchChange = (event) => {
     },
   ];
 
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#1A2027',
-    }),
-  }));
   const paginationModel = { page: 0, pageSize: 5 };
 
   return (
@@ -218,59 +221,57 @@ const handleSearchChange = (event) => {
       <div style={{ height: '70px' }}></div>
 
       <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2} columns={16}>
+        <Grid container spacing={2} columns={16} style={{ border: 'none' }}>
           {/*  add Employee */}
           <Grid item xs={2}>
-            <Item>
-              <Box sx={{ '& > :not(style)': { m: 1 } }} style={{ border: 'none' }}>
-                <Fab variant="extended" sx={{ border: 'none' }} onClick={addEmployee}>
-                  <AddIcon sx={{ mr: 1 }} />
-                  Employee
-                </Fab>
-              </Box>
-            </Item>
+            <Box sx={{ '& > :not(style)': { m: 1 } }} >
+              <Fab variant="extended" sx={{ border: 'none' }} onClick={addEmployee}>
+                <AddIcon sx={{ mr: 1 }} />
+                Employee
+              </Fab>
+            </Box>
           </Grid>
 
           {/* select depatment */}
           <Grid item xs={6}>
-            <Item>
-              <FormControl sx={{ m: 1, minWidth: 450 }}>
-                <InputLabel id="demo-simple-select-autowidth-label">Select Department</InputLabel>
-                <Select
-                  labelId="demo-simple-select-autowidth-label"
-                  id="demo-simple-select-autowidth"
-                  value={selectedDepartment}
-                  onChange={handleDepartmentChange}
-                  autoWidth
-                  label="Select Department"
-                >
-                  {departments.map((dep) => (
-                    <MenuItem
+            <FormControl sx={{ m: 1, minWidth: 450 }}>
+              <InputLabel id="demo-simple-select-autowidth-label">Select Department</InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
+                value={selectedDepartment}
+                onChange={handleDepartmentChange}
+                autoWidth
+                label="Select Department"
+              >
+                <MenuItem value="">
+                  All Departments
+                </MenuItem>
+                {departments.map((dep) => (
+                  <MenuItem
                     key={dep.departmentCode} value={dep.departmentCode}
-                    >
-                      {dep.departmentName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Item>
+                  >
+                    {dep.departmentName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           {/* seach employee */}
           <Grid item xs={6}>
-            <Item>
-              <Box sx={{ width: 500, maxWidth: '100%' }}>
-                <FormControl sx={{ m: 1, minWidth: 450 }}>
-                  <TextField 
-                  fullWidth 
-                  label="Search Employee..." 
-                  id="search" 
+            <Box sx={{ width: 500, maxWidth: '100%', border: 'none' }}>
+              <FormControl sx={{ m: 1, minWidth: 450 }}>
+                <TextField
+                  fullWidth
+                  label="Search Employee..."
+                  id="search"
                   value={searchInput}
+                  inputRef={searchInputRef}
                   onChange={handleSearchChange}
-                  />
-                </FormControl>
-              </Box>
-            </Item>
+                />
+              </FormControl>
+            </Box>
           </Grid>
         </Grid>
       </Box>
@@ -284,42 +285,17 @@ const handleSearchChange = (event) => {
           getRowId={(row) => row.empNo}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[5, 10]}
-          checkboxSelection
+          // checkboxSelection
           sx={{ border: 0 }}
         />
       </Paper>
 
       {/* Delete Confirmation Modal */}
-      <Modal open={openModal} onClose={handleClose}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography id="modal-title" variant="h6" component="h2">
-            Confirm Deletion
-          </Typography>
-          <Typography id="modal-description" sx={{ mt: 2 }}>
-            Are you sure you want to delete this employee?
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-            <Button onClick={handleClose} variant="outlined" sx={{ mr: 2 }}>
-              Cancel
-            </Button>
-            <Button onClick={deleteEmployee} variant="contained" color="error">
-              Delete
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      <DeleteModal
+          open={openModal}
+          handleClose={handleClose}
+          deleteEmployee={deleteEmployee}
+      />
     </div>
   );
 };
