@@ -1,4 +1,5 @@
 import { Modal, Button, Box, Typography } from '@mui/material';
+import PropTypes from 'prop-types'
 
 const DeleteModal = ({handleClose, open, deleteEmployee }) => {
   return (
@@ -38,4 +39,9 @@ const DeleteModal = ({handleClose, open, deleteEmployee }) => {
   )
 }
 
+DeleteModal.propTypes = {
+    handleClose: PropTypes.arrayOf(PropTypes.any).isRequired,
+    open: PropTypes.arrayOf(PropTypes.any).isRequired,
+    deleteEmployee: PropTypes.arrayOf(PropTypes.any).isRequired,
+}
 export default DeleteModal
