@@ -6,7 +6,7 @@ The AddEmployee component is a form-based React component that allows users to a
 
 ## Features
 
-- Dynamic form inputs for employee details.\
+-Dynamic form inputs for employee details.\
 -Department dropdown populated from an API.\
 -ISO 8601 format for date fields (e.g., dateOfJoin, dateOfBirth).\
 -Checkbox for active status.\
