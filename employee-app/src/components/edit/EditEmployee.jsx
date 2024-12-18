@@ -7,6 +7,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import API_ENDPOINT from '../../services/config';
 import { EMPLOYEE_BY_ID, EDIT_EMPLOYEE } from '../../services/api';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+
+const today = dayjs();
+const yesterday = dayjs().subtract(1, 'day');
+const todayStartOfTheDay = today.startOf('day');
 
 const EditEmployee = () => {
   const navigate = useNavigate()
@@ -18,17 +28,19 @@ const EditEmployee = () => {
     empAddressLine2: '',
     empAddressLine3: '',
     departmentCode: '',
+    dateOfJoin: new Date().toISOString(),
+    dateOfBirth: new Date().toISOString(),
     basicSalary: '',
     isActive: false,
   });
 
   // get Data by ID
-  const fetchEmployeeData = async () => {
+  const fetchEmployeeByData = async () => {
     console.log("id ==========>>>", id);
     try {
       const response = await API_ENDPOINT.get(`${EMPLOYEE_BY_ID}/${id}`);
-      setFormData(response.data); 
-      console.log("formData ==========>>>", formData);
+      setFormData(response.data);
+      console.log("edit formData ==========>>>", response.data);
     } catch (error) {
       console.error('Error fetching employee data:', error);
     }
@@ -65,7 +77,7 @@ const EditEmployee = () => {
 
   // Fetch employee data by id
   useEffect(() => {
-    fetchEmployeeData();
+    fetchEmployeeByData();
   }, []);
 
   return (
@@ -158,25 +170,59 @@ const EditEmployee = () => {
               />
             </Grid>
 
-            {/* Date of Joining */}
-            {/* <Grid item xs={12} sm={6}>
-              <DatePicker
-                label="Date of Joining"
-                value={formData.dateOfJoin}
-                onChange={(value) => handleDateChange('dateOfJoin', value)}
-                renderInput={(params) => <TextField {...params} fullWidth />}
-              />
-            </Grid> */}
+            {/* Date of Joining*/}
+            <Grid item xs={12} sm={6}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer
+                  components={[
+                    'DatePicker',
+                    'DateTimePicker',
+                  ]}
+                >
+                  <DemoItem label="Date of Joining">
+                    <DatePicker
+                      // value={new Date(formData.dateOfBirth)}
+                      // onChange={(value) => handleDateChange('dateOfBirth', value)}
+                      // renderInput={(params) => <TextField {...params} fullWidth />}
+                      // disablePast
+                      views={['year', 'month', 'day']}
+                      defaultValue={formData.dateOfJoin ? dayjs(formData.dateOfJoin) : null}
+                      onChange={(newValue) => {
+                        const formattedValue = newValue ? newValue.toISOString() : '';
+                        setFormData({ ...formData, dateOfJoin: formattedValue });
+                      }}
+                    />
+                  </DemoItem>
+                </DemoContainer>
+              </LocalizationProvider>
+            </Grid>
 
             {/* Date of Birth */}
-            {/* <Grid item xs={12} sm={6}>
-              <DatePicker
-                label="Date of Birth"
-                value={formData.dateOfBirth}
-                onChange={(value) => handleDateChange('dateOfBirth', value)}
-                renderInput={(params) => <TextField {...params} fullWidth />}
-              />
-            </Grid> */}
+            <Grid item xs={12} sm={6}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer
+                  components={[
+                    'DatePicker',
+                    'DateTimePicker',
+                  ]}
+                >
+                  <DemoItem label="Date of Birth">
+                    <DatePicker
+                      // value={new Date(formData.dateOfBirth)}
+                      // onChange={(value) => handleDateChange('dateOfBirth', value)}
+                      // renderInput={(params) => <TextField {...params} fullWidth />}
+                      // disablePast
+                      defaultValue={formData.dateOfBirth ? dayjs(formData.dateOfBirth) : null}
+                      onChange={(newValue) => {
+                        const formattedValue = newValue ? newValue.toISOString() : '';
+                        setFormData({ ...formData, dateOfBirth: formattedValue });
+                      }}
+                      views={['year', 'month', 'day']}
+                    />
+                  </DemoItem>
+                </DemoContainer>
+              </LocalizationProvider>
+            </Grid>
 
             {/* Basic Salary */}
             <Grid item xs={12}>
@@ -211,8 +257,8 @@ const EditEmployee = () => {
               </Button>
             </Grid>
           </Grid>
-        </form> 
-       </Box>
+        </form>
+      </Box>
     </>
   )
 }

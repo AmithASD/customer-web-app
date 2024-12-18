@@ -200,7 +200,7 @@ const EmployeeList = () => {
 
   return (
     <div>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1 }} xs={12}>
         <AppBar position="static">
           <Toolbar>
             <IconButton
@@ -220,61 +220,54 @@ const EmployeeList = () => {
       </Box>
       <div style={{ height: '70px' }}></div>
 
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2} columns={16} style={{ border: 'none' }}>
-          {/*  add Employee */}
-          <Grid item xs={2}>
-            <Box sx={{ '& > :not(style)': { m: 1 } }} >
-              <Fab variant="extended" sx={{ border: 'none' }} onClick={addEmployee}>
-                <AddIcon sx={{ mr: 1 }} />
-                Employee
-              </Fab>
-            </Box>
-          </Grid>
+      <Grid container spacing={2} alignItems="center" style={{ border: 'none' }}>
+  {/* Add Employee */}
+  <Grid item xs={12} sm={2} md={2}>
+    <Box sx={{ '& > :not(style)': { m: 1 } }}>
+      <Fab variant="extended" sx={{ border: 'none' }} onClick={addEmployee}>
+        <AddIcon sx={{ mr: 1 }} />
+        Employee
+      </Fab>
+    </Box>
+  </Grid>
 
-          {/* select depatment */}
-          <Grid item xs={6}>
-            <FormControl sx={{ m: 1, minWidth: 450 }}>
-              <InputLabel id="demo-simple-select-autowidth-label">Select Department</InputLabel>
-              <Select
-                labelId="demo-simple-select-autowidth-label"
-                id="demo-simple-select-autowidth"
-                value={selectedDepartment}
-                onChange={handleDepartmentChange}
-                autoWidth
-                label="Select Department"
-              >
-                <MenuItem value="">
-                  All Departments
-                </MenuItem>
-                {departments.map((dep) => (
-                  <MenuItem
-                    key={dep.departmentCode} value={dep.departmentCode}
-                  >
-                    {dep.departmentName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+  {/* Select Department and Search Employee in one row */}
+  <Grid item xs={12} sm={10} md={10}>
+    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
+      {/* Select Department */}
+      <FormControl fullWidth sx={{ flex: 1 }}>
+        <InputLabel id="select-department-label">Select Department</InputLabel>
+        <Select
+          labelId="select-department-label"
+          id="select-department"
+          value={selectedDepartment}
+          onChange={handleDepartmentChange}
+          label="Select Department"
+        >
+          <MenuItem value="">All Departments</MenuItem>
+          {departments.map((dep) => (
+            <MenuItem key={dep.departmentCode} value={dep.departmentCode}>
+              {dep.departmentName}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-          {/* seach employee */}
-          <Grid item xs={6}>
-            <Box sx={{ width: 500, maxWidth: '100%', border: 'none' }}>
-              <FormControl sx={{ m: 1, minWidth: 450 }}>
-                <TextField
-                  fullWidth
-                  label="Search Employee..."
-                  id="search"
-                  value={searchInput}
-                  inputRef={searchInputRef}
-                  onChange={handleSearchChange}
-                />
-              </FormControl>
-            </Box>
-          </Grid>
-        </Grid>
-      </Box>
+      {/* Search Employee */}
+      <FormControl fullWidth sx={{ flex: 1 }}>
+        <TextField
+          label="Search Employee..."
+          id="search"
+          value={searchInput}
+          inputRef={searchInputRef}
+          onChange={handleSearchChange}
+        />
+      </FormControl>
+    </Box>
+  </Grid>
+</Grid>
+
+
       <div style={{ height: '30px' }}></div>
 
       {/* data table */}
@@ -292,9 +285,9 @@ const EmployeeList = () => {
 
       {/* Delete Confirmation Modal */}
       <DeleteModal
-          open={openModal}
-          handleClose={handleClose}
-          deleteEmployee={deleteEmployee}
+        open={openModal}
+        handleClose={handleClose}
+        deleteEmployee={deleteEmployee}
       />
     </div>
   );

@@ -10,7 +10,6 @@ export default defineConfig({
         target: 'http://examination.24x7retail.com',
         changeOrigin: true,
         secure: false,
-        port: 3000,
       },
     },
   },
